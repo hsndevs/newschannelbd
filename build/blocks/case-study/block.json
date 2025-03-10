@@ -1,0 +1,30 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "case-study/case-study",
+  "version": "0.1.0",
+  "title": "Case Study",
+  "category": "widgets",
+  "icon": "smiley",
+  "description": "This is the case study for NewsChanneBD.",
+  "example": {},
+  "supports": {
+    "html": false
+  },
+  "attributes": {
+    "titleImageUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "content": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "textdomain": "case-study",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "render": "file:./render.php",
+  "viewScript": "file:./view.js"
+}

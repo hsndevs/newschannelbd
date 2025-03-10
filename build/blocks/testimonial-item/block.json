@@ -1,0 +1,63 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "newschannelbd/testimonial-item",
+  "version": "0.1.0",
+  "title": "Testimonial Item",
+  "category": "widgets",
+  "icon": "smiley",
+  "description": "Example block scaffolded with Create Block tool.",
+  "example": {},
+  "parent": [
+    "newschannelbd/testimonials"
+  ],
+  "supports": {
+    "html": false
+  },
+  "attributes": {
+    "tabId": {
+      "type": "string",
+      "default": ""
+    },
+    "emails": {
+      "type": "array",
+      "default": []
+    },
+    "imageUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "videoUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "quote": {
+      "type": "string",
+      "default": ""
+    },
+    "message": {
+      "type": "string",
+      "default": ""
+    },
+    "tags": {
+      "type": "string",
+      "default": ""
+    },
+    "author": {
+      "type": "string",
+      "default": ""
+    },
+    "designation": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "usesContext": [
+    "newschannelbdTestimonials/currentTab"
+  ],
+  "textdomain": "testimonial-item",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "viewScript": "file:./view.js"
+}
