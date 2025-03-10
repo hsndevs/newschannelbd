@@ -65,6 +65,7 @@ function loop_category_posts($child_category, $child_category_posts) {
 		$post_permalink = get_permalink($post);
 		$post_excerpt = get_the_excerpt($post);
 		$post_time_diff = human_time_diff(get_the_time('U', $post), current_time('timestamp'));
+		$shareThis = sharethis_inline_buttons();
 
 		$html .= <<<HTML
 		<div class="ncbd-post">
@@ -80,6 +81,7 @@ function loop_category_posts($child_category, $child_category_posts) {
 					<p style="margin:0;font-style:italic;color:#555;">{$post_time_diff} ago</p>
 				</div>
 			</div>
+			{$shareThis}
 		</div>
 	HTML;
 	}
