@@ -65,7 +65,8 @@ function loop_category_posts($child_category, $child_category_posts) {
 		$post_permalink = get_permalink($post);
 		$post_excerpt = get_the_excerpt($post);
 		$post_time_diff = human_time_diff(get_the_time('U', $post), current_time('timestamp'));
-		echo $shareThis = sharethis_inline_buttons();
+		$shareThis = '';
+		// echo $shareThis = sharethis_inline_buttons();
 
 		$html .= <<<HTML
 		<div class="ncbd-post">
@@ -89,6 +90,24 @@ function loop_category_posts($child_category, $child_category_posts) {
 
 	echo $html;
 }
+
+
+/**
+ * Generate custom search form
+ *
+ * @param string $form Form HTML.
+ * @return string Modified form HTML.
+ */
+function ncbd_sidebar_search_form($form) {
+	$form = '<form role="search" method="get" id="searchform" class="searchform" action="' . home_url('/') . '" >
+	<div class="sidebar-search-form"><input placeholder="Type to search..." type="text" value="' . get_search_query() . '" name="s" id="s" />
+	<button type="submit"><span class="material-symbols-outlined">search</span></button>
+	</div>
+	</form>';
+
+	return $form;
+}
+add_filter('get_search_form', 'ncbd_sidebar_search_form');
 
 
 function custom_excerpt_length($length) {

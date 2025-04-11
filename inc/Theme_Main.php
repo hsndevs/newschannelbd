@@ -95,6 +95,7 @@ final class Theme_Main {
 
 		Blocks\Variations::get_instance();
 		Enqueue::get_instance();
+		Tgmpa::get_instance();
 	}
 
 
