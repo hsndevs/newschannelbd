@@ -18,6 +18,7 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
 
 NewsChannelBD\Theme_Main::get_instance();
 
+define('NEWSCHANNELBD_PLACEHOLDER_IMAGE', 'https://placehold.co/600x400/ddd/999/svg?text=No+Image+Found');
 
 // This function will add fallback post thumbnail here for each post
 function newschannelbd_post_thumbnail() {
@@ -27,8 +28,7 @@ function newschannelbd_post_thumbnail() {
 	// Check if the post has a thumbnail
 	if ($post_thumbnail == '' || !has_post_thumbnail()) {
 		// Fallback image if no thumbnail
-		$placeholder_image = 'https://placehold.co/600x400/ddd/999/svg?text=No+Image+Found';
-		$post_thumbnail = '<img src="' . $placeholder_image . '" alt="no post image" />';
+		$post_thumbnail = '<img src="' . NEWSCHANNELBD_PLACEHOLDER_IMAGE . '" alt="no post image" />';
 	}
 
 	// Display the post thumbnail
