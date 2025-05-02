@@ -209,7 +209,7 @@ function pr($data, $die = false) {
 	}
 }
 
-function wpdocs_register_multiple_blocks() {
+function wpdocs_register_multiple_blocks_x() {
 	$build_dir = __DIR__ . '/build/blocks';
 
 	foreach (scandir($build_dir) as $result) {
@@ -224,7 +224,32 @@ function wpdocs_register_multiple_blocks() {
 	// die;
 }
 
-add_action('init', 'wpdocs_register_multiple_blocks');
+function wpdocs_register_multiple_blocks() {
+    $build_dir = __DIR__ . '/build/blocks';
+
+    foreach (scandir($build_dir) as $result) {
+        $block_location = $build_dir . '/' . $result;
+
+        if (!is_dir($block_location) || '.' === $result || '..' === $result) {
+            continue;
+        }
+
+        $render_file = $block_location . '/render.php';
+
+        register_block_type($block_location, [
+            'render_callback' => function( $attributes, $content, $block ) use ( $render_file ) {
+                ob_start();
+                if ( file_exists( $render_file ) ) {
+                    include $render_file;
+                }
+                return ob_get_clean();
+            }
+        ]);
+    }
+}
+
+
+add_action('init', 'wpdocs_register_multiple_blocks_x');
 
 
 
