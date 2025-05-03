@@ -54,7 +54,7 @@ add_filter('rewrite_rules_array', 'my_custom_category_rewrite_rules');
 
 function loop_category_posts($child_category, $child_category_posts) {
 	// Display child category name
-	$html = '<h2 class="ncbd-block-title" style="text-decoration:underline;">' . $child_category->name . '</h2>';
+	$html = '<h2 class="ncbd-block-title">' . $child_category->name . '</h2>';
 
 	// Loop through each post but create a grid of 3 columns using flexbox
 	$html .= '<div class="ncbd-block-posts">';
