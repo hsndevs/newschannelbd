@@ -355,7 +355,7 @@ function wpdocs_codex_case_studies_init() {
 
 	register_post_type('case-studies', $args);
 }
-add_action('init', 'wpdocs_codex_case_studies_init');
+// add_action('init', 'wpdocs_codex_case_studies_init');
 function mytheme_add_editor_styles() {
 	// Add support for wide and full-width blocks
 	// add_theme_support( 'align-wide' );
