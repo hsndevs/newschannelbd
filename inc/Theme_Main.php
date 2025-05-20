@@ -17,7 +17,8 @@ if (!defined('ABSPATH')) {
 /**
  * Plugin_Main Class
  */
-final class Theme_Main {
+final class Theme_Main
+{
 	use Traits\Singleton, Traits\PluginData; // Use the Singleton and PluginData trait.
 
 	/**
@@ -25,7 +26,8 @@ final class Theme_Main {
 	 *
 	 * @return void
 	 */
-	private function __construct() {
+	private function __construct()
+	{
 		// All the initialization tasks.
 		$this->register_hooks();
 	}
@@ -35,7 +37,8 @@ final class Theme_Main {
 	 *
 	 * @return void
 	 */
-	public function register_hooks() {
+	public function register_hooks()
+	{
 		// Defining plugin constants.
 		add_action('after_setup_theme', array($this, 'init_plugin'));
 		// Set up the theme.
@@ -43,7 +46,8 @@ final class Theme_Main {
 	}
 
 
-	public function newschannelbd_setup() {
+	public function newschannelbd_setup()
+	{
 		// Make the theme available for translation.
 		load_theme_textdomain('newschannelbd');
 
@@ -89,21 +93,22 @@ final class Theme_Main {
 	 *
 	 * @return void
 	 */
-	public function init_plugin() {
+	public function init_plugin()
+	{
 		// Defining plugin constants.
 		$this->define_constants();
 
 		Blocks\Variations::get_instance();
 		Enqueue::get_instance();
 		Tgmpa::get_instance();
+		Meta_Widget::get_instance();
 	}
-
-
 
 	/**
 	 * Function to define all constants.
 	 */
-	private function define_constants() {
+	private function define_constants()
+	{
 
 		// It is defined as the plugin directory path without the trailing slash.
 		if (!defined('FOCOTIK_THEME_PATH')) {
