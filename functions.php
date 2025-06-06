@@ -464,7 +464,194 @@ function render_testimonials_tabs($attributes, $content)
 			?>
 		</div>
 	</div>
-<?php
+	<?php
 
 	return ob_get_clean();
+}
+
+
+// Add a column to posts with checkbox field in the wp-admin
+function add_latest_post_column($columns)
+{
+	$columns['latest_post'] = 'Latest Post';
+	return $columns;
+}
+add_filter('manage_posts_columns', 'add_latest_post_column');
+
+// Modify the checkbox column to include AJAX functionality
+function add_latest_post_column_content($column_name, $post_id)
+{
+	if ($column_name == 'latest_post') {
+		$is_latest = get_post_meta($post_id, '_latest_post', true);
+		$nonce = wp_create_nonce('latest_post_nonce');
+		echo '<div style="padding-left: 30px;">';
+		echo '<input type="checkbox" class="latest-post-checkbox" '
+			. 'data-post-id="' . esc_attr($post_id) . '" '
+			. 'data-nonce="' . esc_attr($nonce) . '" '
+			. ($is_latest === 'yes' ? 'checked' : '')
+			. '>';
+		echo '</div>';
+	}
+}
+add_action('manage_posts_custom_column', 'add_latest_post_column_content', 10, 2);
+
+// on check of the checkbox, create an ajax request to add a meta field value to an existing meta fil=ed of the post
+function add_latest_post_meta_field($post_id)
+{
+	if (isset($_POST['latest_post'])) {
+		$post_ids = $_POST['latest_post'];
+		foreach ($post_ids as $post_id) {
+			update_post_meta($post_id, 'latest_post', '1');
+		}
+	}
+}
+add_action('save_post', 'add_latest_post_meta_field');
+
+// Add AJAX action for latest post update
+function handle_latest_post_update()
+{
+	// Verify nonce for security
+	if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'latest_post_nonce')) {
+		wp_send_json_error('Invalid nonce');
+	}
+
+	// Check if post ID is set
+	if (!isset($_POST['post_id'])) {
+		wp_send_json_error('Post ID is required');
+	}
+
+	$post_id = intval($_POST['post_id']);
+	$is_checked = isset($_POST['is_checked']) ? $_POST['is_checked'] === 'true' : false;
+
+	// Update post meta with yes/no value
+	$result = update_post_meta($post_id, '_latest_post', $is_checked ? 'yes' : 'no');
+
+	if ($result) {
+		wp_send_json_success('Meta updated successfully');
+	} else {
+		wp_send_json_error('Failed to update meta');
+	}
+}
+add_action('wp_ajax_update_latest_post', 'handle_latest_post_update');
+
+function add_latest_post_scripts()
+{
+	if (is_admin()) {
+	?>
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				document.querySelectorAll('.latest-post-checkbox').forEach(function(checkbox) {
+					checkbox.addEventListener('change', function() {
+						const postId = this.dataset.postId;
+						const nonce = this.dataset.nonce;
+						const isChecked = this.checked;
+
+						const formData = new URLSearchParams();
+						formData.append('action', 'update_latest_post');
+						formData.append('post_id', postId);
+						formData.append('is_checked', isChecked);
+						formData.append('nonce', nonce);
+
+						fetch(ajaxurl, {
+								method: 'POST',
+								headers: {
+									'Content-Type': 'application/x-www-form-urlencoded'
+								},
+								body: formData
+							})
+							.then(response => response.json())
+							.then(data => {
+								if (!data.success) {
+									alert('Failed to update latest post status');
+									checkbox.checked = !isChecked;
+								}
+							})
+							.catch(error => {
+								console.error('Error:', error);
+								alert('Failed to update latest post status');
+								checkbox.checked = !isChecked;
+							});
+					});
+				});
+			});
+		</script>
+<?php
+	}
+}
+add_action('admin_footer', 'add_latest_post_scripts');
+
+
+function get_meta_filtered_posts_x($meta_key, $meta_value)
+{
+	$args = array(
+		'post_type' => 'post',
+		'posts_per_page' => 3,
+		'meta_query' => array(
+			array(
+				'key' => $meta_key,
+				'value' => $meta_value,
+				'compare' => '=',
+			),
+		)
+	);
+	return new WP_Query($args);
+}
+
+
+function get_meta_filtered_posts($meta_key, $meta_value)
+{
+
+	$args = array(
+		'post_type' => 'post',
+		'posts_per_page' => -1,
+		'meta_query' => array(
+			array(
+				'key' => $meta_key,
+				'value' => $meta_value,
+				'compare' => '=',
+			),
+		)
+	);
+	$latest_posts = new WP_Query($args);
+	// Display child category name
+	// $html = '<h2 class="ncbd-block-title">' . $child_category->name . '</h2>';
+
+	// Loop through each post but create a grid of 3 columns using flexbox
+	$html = '<div class="ncbd-block-posts">';
+	if (count($latest_posts->posts) < 1) {
+		$html .= 'No post found!';
+	} else {
+
+		foreach ($latest_posts->posts as $post) {
+
+			$post_thumbnail = has_post_thumbnail($post) ? get_the_post_thumbnail($post, 'full', array('style' => '')) : '<span style="font-size: 1.5em; color: #333;">NewsChannelBD</span>';
+			$post_title = get_the_title($post);
+			$post_permalink = get_permalink($post);
+			$post_excerpt = get_the_excerpt($post);
+			$post_time_diff = human_time_diff(get_the_time('U', $post), current_time('timestamp'));
+			$shareThis = '';
+			// echo $shareThis = sharethis_inline_buttons();
+
+			$html .= <<<HTML
+		<div class="ncbd-post">
+			<div class="ncbd-post-thumb">
+				<a href="$post_permalink" title="$post_title">
+					{$post_thumbnail}
+				</a>
+			</div>
+			<div class="ncbd-post-content">
+				<h3 class="ncbd-post-title"><a href="{$post_permalink}" title="{$post_title}">{$post_title}</a></h3>
+				<div style="flex: 1 1 100%;display:flex;justify-content: flex-end;flex-direction: column;">
+					<p style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;margin:0;">{$post_excerpt}</p>
+					<p style="margin:0;font-style:italic;color:#555;">{$post_time_diff} ago</p>
+				</div>
+			</div>
+			{$shareThis}
+		</div>
+	HTML;
+		}
+	}
+	$html .= '</div>';
+	wp_reset_postdata();
+	echo $html;
 }

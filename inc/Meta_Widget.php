@@ -19,6 +19,8 @@ class Meta_Widget {
 
     // Meta key
     private $meta_key = '_custom_meta_key';
+    private $news_ticker_key = '_news_ticker';
+    private $latest_post = '_latest_post';
 
     /**
 	 * Class constructor (private to enforce singleton pattern).
@@ -39,8 +41,8 @@ class Meta_Widget {
 
     public function register_meta_box() {
         add_meta_box(
-            'custom_meta_box',
-            'Custom Meta Field',
+            'post_meta_box',
+            'News Meta',
             [ $this, 'render_meta_box' ],
             'post', // Change this to any post type (e.g., 'page', 'custom_post_type')
             'side', // Right Sidebar
@@ -55,10 +57,20 @@ class Meta_Widget {
         // Nonce field for security
         wp_nonce_field( 'custom_meta_field_nonce', 'custom_meta_field_nonce' );
 
-        $meta_value = get_post_meta( $post->ID, $this->meta_key, true );
+        $news_ticker_value = get_post_meta($post->ID, $this->news_ticker_key, true);
+        $latest_post_value = get_post_meta($post->ID, $this->latest_post, true);
+
         ?>
-        <label for="custom_meta_value">Meta Value:</label>
-        <input type="text" name="custom_meta_value" id="custom_meta_value" value="<?php echo esc_attr( $meta_value ); ?>" style="width: 100%;" />
+        <p>
+        <label for="news_ticker">
+            <input type="checkbox" name="news_ticker" id="news_ticker" <?php checked($news_ticker_value, 'yes'); ?>> Add for news ticker
+        </label>
+        </p>
+        <p>
+        <label for="latest_post">
+            <input type="checkbox" name="latest_post" id="latest_post" <?php checked($latest_post_value, 'yes'); ?>> Add for latest news
+        </label>
+        </p>
         <?php
     }
 
@@ -85,5 +97,13 @@ class Meta_Widget {
         } else {
             delete_post_meta( $post_id, $this->meta_key );
         }
+
+         // Save news ticker value
+         $news_ticker_value = isset($_POST['news_ticker']) ? 'yes' : 'no';
+         update_post_meta($post_id, $this->news_ticker_key, $news_ticker_value);
+         
+         // Save news ticker value
+         $latest_post_value = isset($_POST['latest_post']) ? 'yes' : 'no';
+         update_post_meta($post_id, $this->latest_post, $latest_post_value);
     }
 }
