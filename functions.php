@@ -21,8 +21,7 @@ NewsChannelBD\Theme_Main::get_instance();
 define('NEWSCHANNELBD_PLACEHOLDER_IMAGE', 'https://placehold.co/600x400/ddd/999/svg?text=No+Image+Found');
 
 // This function will add fallback post thumbnail here for each post
-function newschannelbd_post_thumbnail()
-{
+function newschannelbd_post_thumbnail() {
 	// Get the post thumbnail
 	$post_thumbnail = get_the_post_thumbnail(null, 'medium');
 
@@ -36,11 +35,10 @@ function newschannelbd_post_thumbnail()
 	echo $post_thumbnail;
 }
 // action hook to add the function
-add_action('newschannelbd_post_thumbnail', 'newschannelbd_post_thumbnail');
+// add_action('newschannelbd_post_thumbnail', 'newschannelbd_post_thumbnail');
 
 
-function my_custom_category_rewrite_rules($rules)
-{
+function my_custom_category_rewrite_rules($rules) {
 	$new_rules = array();
 	$categories = get_categories(array('hide_empty' => false));
 
@@ -54,8 +52,7 @@ function my_custom_category_rewrite_rules($rules)
 }
 add_filter('rewrite_rules_array', 'my_custom_category_rewrite_rules');
 
-function loop_category_posts($child_category, $child_category_posts)
-{
+function loop_category_posts($child_category, $child_category_posts) {
 	// Display child category name
 	$html = '<h2 class="ncbd-block-title">' . $child_category->name . '</h2>';
 
@@ -106,8 +103,7 @@ function loop_category_posts($child_category, $child_category_posts)
  * @param string $form Form HTML.
  * @return string Modified form HTML.
  */
-function ncbd_sidebar_search_form($form)
-{
+function ncbd_sidebar_search_form($form) {
 	$form = '<form role="search" method="get" id="searchform" class="searchform" action="' . home_url('/') . '" >
 	<div class="sidebar-search-form"><input placeholder="Type to search..." type="text" value="' . get_search_query() . '" name="s" id="s" />
 	<button type="submit"><span class="material-symbols-outlined">search</span></button>
@@ -119,15 +115,13 @@ function ncbd_sidebar_search_form($form)
 add_filter('get_search_form', 'ncbd_sidebar_search_form');
 
 
-function custom_excerpt_length($length)
-{
+function custom_excerpt_length($length) {
 	return 20; // Set the number of words you want in the excerpt
 }
 add_filter('excerpt_length', 'custom_excerpt_length', 999);
 
 
-function custom_excerpt_more($more)
-{
+function custom_excerpt_more($more) {
 	return '...'; // Custom "Read More" text
 }
 add_filter('excerpt_more', 'custom_excerpt_more');
@@ -136,10 +130,8 @@ add_filter('excerpt_more', 'custom_excerpt_more');
 /**
  * Custom walker class to display parent categories with child categories in a submenu.
  */
-class Parent_Category_Walker extends Walker_Nav_Menu
-{
-	function start_el(&$output, $item, $depth = 0, $args = array(), $id = 0)
-	{
+class Parent_Category_Walker extends Walker_Nav_Menu {
+	function start_el(&$output, $item, $depth = 0, $args = array(), $id = 0) {
 		// Skip child categories (categories with a parent)
 		if ($item->object == 'category' && $item->menu_item_parent != 0) {
 			return;
@@ -187,8 +179,7 @@ class Parent_Category_Walker extends Walker_Nav_Menu
 		}
 	}
 
-	function end_el(&$output, $item, $depth = 0, $args = array())
-	{
+	function end_el(&$output, $item, $depth = 0, $args = array()) {
 		// Skip child categories (categories with a parent)
 		if ($item->object == 'category' && $item->menu_item_parent != 0) {
 			return;
@@ -198,16 +189,14 @@ class Parent_Category_Walker extends Walker_Nav_Menu
 		parent::end_el($output, $item, $depth, $args);
 	}
 
-	function start_lvl(&$output, $depth = 0, $args = array())
-	{
+	function start_lvl(&$output, $depth = 0, $args = array()) {
 		// Start a new submenu if the item is not a child category
 		if ($depth >= 0) {
 			$output .= '<ul class="sub-menu">';
 		}
 	}
 
-	function end_lvl(&$output, $depth = 0, $args = array())
-	{
+	function end_lvl(&$output, $depth = 0, $args = array()) {
 		// End the submenu if the item is not a child category
 		if ($depth >= 0) {
 			$output .= '</ul>';
@@ -216,8 +205,7 @@ class Parent_Category_Walker extends Walker_Nav_Menu
 }
 
 
-function pr($data, $die = false)
-{
+function pr($data, $die = false) {
 	echo '<pre>';
 	print_r($data);
 	echo '</pre>';
@@ -226,8 +214,7 @@ function pr($data, $die = false)
 	}
 }
 
-function wpdocs_register_multiple_blocks_x()
-{
+function wpdocs_register_multiple_blocks_x() {
 	$build_dir = __DIR__ . '/build/blocks';
 
 	foreach (scandir($build_dir) as $result) {
@@ -242,8 +229,7 @@ function wpdocs_register_multiple_blocks_x()
 	// die;
 }
 
-function wpdocs_register_multiple_blocks()
-{
+function wpdocs_register_multiple_blocks() {
 	$build_dir = __DIR__ . '/build/blocks';
 
 	foreach (scandir($build_dir) as $result) {
@@ -272,8 +258,7 @@ add_action('init', 'wpdocs_register_multiple_blocks_x');
 
 
 
-function create_pages_if_not_exist()
-{
+function create_pages_if_not_exist() {
 	$pages = ['Home', 'About', 'Services', 'Clients', 'Works', 'Contact', 'Product Redesign', 'MVP', 'Team Extention', 'Case Study', 'Blog'];
 	foreach ($pages as $slug) {
 		$existing_page = get_page_by_path(strtolower($slug));
@@ -289,8 +274,7 @@ function create_pages_if_not_exist()
 add_action('after_switch_theme', 'create_pages_if_not_exist');
 
 // Function to generate and print navigation HTML based on page titles and URLs
-function generate_navigation_html()
-{
+function generate_navigation_html() {
 	// Define the array of page titles
 	$pages = array(
 		'Works',
@@ -333,15 +317,13 @@ HTML;
 	return $html;
 }
 
-function add_reset_filter_link($content)
-{
+function add_reset_filter_link($content) {
 	$reset_link = '<li class="cat-item' . (is_home() ? ' current-cat' : '') . '"><a href="' . home_url('/blog') . '">All topics</a></li>';
 	return $reset_link . $content;
 }
 add_filter('wp_list_categories', 'add_reset_filter_link');
 
-function wpdocs_codex_case_studies_init()
-{
+function wpdocs_codex_case_studies_init() {
 	$labels = array(
 		'name'               => _x('Case Studies', 'Post type general name', 'newschannelbd'),
 		'singular_name'      => _x('Case Study', 'Post type singular name', 'newschannelbd'),
@@ -379,14 +361,12 @@ function wpdocs_codex_case_studies_init()
 	register_post_type('case-studies', $args);
 }
 // add_action('init', 'wpdocs_codex_case_studies_init');
-function mytheme_add_editor_styles()
-{
+function mytheme_add_editor_styles() {
 	// Add support for wide and full-width blocks
 	// add_theme_support( 'align-wide' );
 }
 add_action('after_setup_theme', 'mytheme_add_editor_styles');
-function render_post_item($post, $signle = false)
-{
+function render_post_item($post, $signle = false) {
 	$post_thumbnail = get_the_post_thumbnail($post->ID, '', ['style' => 'border-radius:8px;max-height:518px;object-fit:cover;width:100%']);
 	if ($post_thumbnail == '' || !has_post_thumbnail($post->ID)) {
 		// $placeholder_image = FOCOTIK_THEME_URI . 'assets/images/placeholder-images/380x150.png';
@@ -427,8 +407,7 @@ function render_post_item($post, $signle = false)
 
 
 /* ====================== */
-function render_testimonials_tabs($attributes, $content)
-{
+function render_testimonials_tabs($attributes, $content) {
 	// Parse all the blocks inside the content to get child blocks
 	$parsed_blocks = parse_blocks($content);
 
@@ -471,16 +450,14 @@ function render_testimonials_tabs($attributes, $content)
 
 
 // Add a column to posts with checkbox field in the wp-admin
-function add_latest_post_column($columns)
-{
+function add_latest_post_column($columns) {
 	$columns['latest_post'] = 'Latest Post';
 	return $columns;
 }
 add_filter('manage_posts_columns', 'add_latest_post_column');
 
 // Modify the checkbox column to include AJAX functionality
-function add_latest_post_column_content($column_name, $post_id)
-{
+function add_latest_post_column_content($column_name, $post_id) {
 	if ($column_name == 'latest_post') {
 		$is_latest = get_post_meta($post_id, '_latest_post', true);
 		$nonce = wp_create_nonce('latest_post_nonce');
@@ -496,8 +473,7 @@ function add_latest_post_column_content($column_name, $post_id)
 add_action('manage_posts_custom_column', 'add_latest_post_column_content', 10, 2);
 
 // on check of the checkbox, create an ajax request to add a meta field value to an existing meta fil=ed of the post
-function add_latest_post_meta_field($post_id)
-{
+function add_latest_post_meta_field($post_id) {
 	if (isset($_POST['latest_post'])) {
 		$post_ids = $_POST['latest_post'];
 		foreach ($post_ids as $post_id) {
@@ -508,8 +484,7 @@ function add_latest_post_meta_field($post_id)
 add_action('save_post', 'add_latest_post_meta_field');
 
 // Add AJAX action for latest post update
-function handle_latest_post_update()
-{
+function handle_latest_post_update() {
 	// Verify nonce for security
 	if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'latest_post_nonce')) {
 		wp_send_json_error('Invalid nonce');
@@ -534,8 +509,7 @@ function handle_latest_post_update()
 }
 add_action('wp_ajax_update_latest_post', 'handle_latest_post_update');
 
-function add_latest_post_scripts()
-{
+function add_latest_post_scripts() {
 	if (is_admin()) {
 	?>
 		<script>
@@ -575,14 +549,13 @@ function add_latest_post_scripts()
 				});
 			});
 		</script>
-<?php
+	<?php
 	}
 }
 add_action('admin_footer', 'add_latest_post_scripts');
 
 
-function get_meta_filtered_posts_x($meta_key, $meta_value)
-{
+function get_meta_filtered_posts_x($meta_key, $meta_value) {
 	$args = array(
 		'post_type' => 'post',
 		'posts_per_page' => 3,
@@ -598,8 +571,7 @@ function get_meta_filtered_posts_x($meta_key, $meta_value)
 }
 
 
-function get_meta_filtered_posts($meta_key, $meta_value)
-{
+function get_meta_filtered_posts($meta_key, $meta_value) {
 
 	$args = array(
 		'post_type' => 'post',
@@ -655,3 +627,35 @@ function get_meta_filtered_posts($meta_key, $meta_value)
 	wp_reset_postdata();
 	echo $html;
 }
+
+// Register custom taxonomy 'report_by' for posts
+function register_report_by_taxonomy() {
+	$labels = array(
+		'name'              => _x('Report By', 'taxonomy general name', 'newschannelbd'),
+		'singular_name'     => _x('Reporter', 'taxonomy singular name', 'newschannelbd'),
+		'search_items'      => __('Search Reporters', 'newschannelbd'),
+		'all_items'         => __('All Reporters', 'newschannelbd'),
+		'parent_item'       => __('Parent Reporter', 'newschannelbd'),
+		'parent_item_colon' => __('Parent Reporter:', 'newschannelbd'),
+		'edit_item'         => __('Edit Reporter', 'newschannelbd'),
+		'update_item'       => __('Update Reporter', 'newschannelbd'),
+		'add_new_item'      => __('Add New Reporter', 'newschannelbd'),
+		'new_item_name'     => __('New Reporter Name', 'newschannelbd'),
+		'menu_name'         => __('Report By', 'newschannelbd'),
+	);
+
+	$args = array(
+		'hierarchical'      => true, // Like categories
+		'labels'            => $labels,
+		'show_ui'           => true,
+		'show_admin_column' => true,
+		'query_var'         => true,
+		'rewrite'           => array('slug' => 'report-by'),
+		'show_in_rest'      => true, // Enable for Gutenberg
+		'public'            => true, // Make taxonomy public
+		'show_in_nav_menus' => true, // Allow in navigation and blocks
+	);
+
+	register_taxonomy('report_by', array('post'), $args);
+}
+add_action('init', 'register_report_by_taxonomy');
