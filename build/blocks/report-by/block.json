@@ -1,0 +1,86 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "newschannelbd/report-by",
+  "version": "0.1.0",
+  "title": "Report By",
+  "category": "widgets",
+  "icon": "admin-users",
+  "description": "Display the report by taxonomy for posts with customizable styling options.",
+  "keywords": [
+    "report",
+    "author",
+    "taxonomy",
+    "reporter"
+  ],
+  "example": {},
+  "supports": {
+    "html": false,
+    "anchor": true,
+    "className": true,
+    "color": {
+      "background": true,
+      "text": true,
+      "link": true
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "fontStyle": true,
+      "fontWeight": true,
+      "__experimentalFontFamily": true
+    }
+  },
+  "attributes": {
+    "showLabel": {
+      "type": "boolean",
+      "default": true
+    },
+    "labelText": {
+      "type": "string",
+      "default": "Report by: "
+    },
+    "displayStyle": {
+      "type": "string",
+      "default": "inline",
+      "enum": [
+        "inline",
+        "block",
+        "badge"
+      ]
+    },
+    "showLinks": {
+      "type": "boolean",
+      "default": false
+    },
+    "maxTerms": {
+      "type": "number",
+      "default": 0
+    },
+    "separator": {
+      "type": "string",
+      "default": ", "
+    },
+    "hideOnEmpty": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "providesContext": {
+    "newschannelbd/reportBy": "reportByTerms"
+  },
+  "usesContext": [
+    "postId",
+    "postType"
+  ],
+  "textdomain": "newschannelbd",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "render": "file:./render.php",
+  "viewScript": "file:./view.js"
+}

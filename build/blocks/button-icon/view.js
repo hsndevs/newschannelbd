@@ -1,0 +1,1 @@
+console.log("Button Icon block loaded successfully"),document.addEventListener("DOMContentLoaded",function(){document.querySelectorAll(".ncbd-nav-toggler").forEach(e=>{e.addEventListener("click",function(){console.log("Navigation toggler clicked")}),e.addEventListener("keydown",function(e){"Enter"!==e.key&&" "!==e.key||(e.preventDefault(),this.click())})})});

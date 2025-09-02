@@ -1,0 +1,77 @@
+<!-- wp:template-part {"slug":"header","theme":"newschannelbd","area":"header"} /-->
+
+<!-- wp:group {"className":"ncbd-content-area","layout":{"type":"constrained","contentSize":"1280px"}} -->
+<div class="wp-block-group ncbd-content-area">
+    <!-- wp:spacer {"height":"80px"} -->
+    <div style="height:80px" aria-hidden="true" class="wp-block-spacer"></div>
+    <!-- /wp:spacer -->
+
+    <!-- wp:group {"style":{"spacing":{"margin":{"bottom":"var:preset|spacing|50"}}},"layout":{"type":"constrained","contentSize":"800px"}} -->
+    <div class="wp-block-group" style="margin-bottom:var(--wp--preset--spacing--50)">
+        <!-- wp:heading {"textAlign":"center","level":1,"style":{"typography":{"fontSize":"clamp(4rem, 8vw, 10rem)","fontWeight":"900","lineHeight":"1"},"elements":{"link":{"color":{"text":"var:preset|color|primary"}}}},"textColor":"primary"} -->
+        <h1 class="wp-block-heading has-text-align-center has-primary-color has-text-color has-link-color" style="font-size:clamp(4rem, 8vw, 10rem);font-weight:900;line-height:1">404</h1>
+        <!-- /wp:heading -->
+
+        <!-- wp:heading {"textAlign":"center","level":2,"style":{"spacing":{"margin":{"top":"0","bottom":"var:preset|spacing|30"}}}} -->
+        <h2 class="wp-block-heading has-text-align-center" style="margin-top:0;margin-bottom:var(--wp--preset--spacing--30)">Page Not Found</h2>
+        <!-- /wp:heading -->
+
+        <!-- wp:paragraph {"align":"center","style":{"spacing":{"margin":{"bottom":"var:preset|spacing|40"}}}} -->
+        <p class="has-text-align-center" style="margin-bottom:var(--wp--preset--spacing--40)">Sorry, the page you are looking for doesn't exist or has been moved. Here are some helpful links instead:</p>
+        <!-- /wp:paragraph -->
+
+        <!-- wp:buttons {"layout":{"type":"flex","justifyContent":"center"}} -->
+        <div class="wp-block-buttons">
+            <!-- wp:button {"style":{"spacing":{"padding":{"left":"var:preset|spacing|50","right":"var:preset|spacing|50","top":"var:preset|spacing|20","bottom":"var:preset|spacing|20"}}}} -->
+            <div class="wp-block-button">
+                <a class="wp-block-button__link wp-element-button" href="/" style="padding-top:var(--wp--preset--spacing--20);padding-right:var(--wp--preset--spacing--50);padding-bottom:var(--wp--preset--spacing--20);padding-left:var(--wp--preset--spacing--50)">Go to Homepage</a>
+            </div>
+            <!-- /wp:button -->
+        </div>
+        <!-- /wp:buttons -->
+    </div>
+    <!-- /wp:group -->
+
+    <!-- wp:spacer {"height":"40px"} -->
+    <div style="height:40px" aria-hidden="true" class="wp-block-spacer"></div>
+    <!-- /wp:spacer -->
+
+    <!-- wp:group {"style":{"spacing":{"margin":{"bottom":"var:preset|spacing|50"}}},"layout":{"type":"constrained","contentSize":"800px"}} -->
+    <div class="wp-block-group" style="margin-bottom:var(--wp--preset--spacing--50)">
+        <!-- wp:heading {"textAlign":"center","level":3,"style":{"spacing":{"margin":{"bottom":"var:preset|spacing|30"}}}} -->
+        <h3 class="wp-block-heading has-text-align-center" style="margin-bottom:var(--wp--preset--spacing--30)">Latest News</h3>
+        <!-- /wp:heading -->
+
+        <!-- wp:query {"queryId":1,"query":{"perPage":3,"pages":0,"offset":0,"postType":"post","order":"desc","orderBy":"date","author":"","search":"","exclude":[],"sticky":"","inherit":false},"layout":{"type":"default"}} -->
+        <div class="wp-block-query">
+            <!-- wp:post-template {"layout":{"type":"grid","columnCount":3}} -->
+            <!-- wp:group {"style":{"spacing":{"padding":{"all":"var:preset|spacing|20"},"margin":{"bottom":"var:preset|spacing|30"}},"border":{"radius":"8px","width":"1px"}},"borderColor":"contrast","layout":{"type":"default"}} -->
+            <div class="wp-block-group has-border-color has-contrast-border-color" style="border-width:1px;border-radius:8px;margin-bottom:var(--wp--preset--spacing--30);padding:var(--wp--preset--spacing--20)">
+                <!-- wp:post-featured-image {"isLink":true,"aspectRatio":"16/9","style":{"spacing":{"margin":{"bottom":"var:preset|spacing|20"}}}} /-->
+
+                <!-- wp:post-title {"isLink":true,"level":4,"style":{"spacing":{"margin":{"bottom":"var:preset|spacing|10"}}}} /-->
+
+                <!-- wp:post-excerpt {"excerptLength":50} /-->
+
+                <!-- wp:post-date {"style":{"typography":{"fontSize":"0.875rem"}},"textColor":"contrast-2"} /-->
+            </div>
+            <!-- /wp:group -->
+            <!-- /wp:post-template -->
+
+            <!-- wp:query-no-results -->
+            <!-- wp:paragraph {"align":"center"} -->
+            <p class="has-text-align-center">No recent posts found.</p>
+            <!-- /wp:paragraph -->
+            <!-- /wp:query-no-results -->
+        </div>
+        <!-- /wp:query -->
+    </div>
+    <!-- /wp:group -->
+
+    <!-- wp:spacer {"height":"60px"} -->
+    <div style="height:60px" aria-hidden="true" class="wp-block-spacer"></div>
+    <!-- /wp:spacer -->
+</div>
+<!-- /wp:group -->
+
+<!-- wp:template-part {"slug":"footer","theme":"newschannelbd","area":"footer"} /-->

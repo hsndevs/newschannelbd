@@ -1,0 +1,34 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "newschannelbd/ncbd-category",
+  "version": "0.1.0",
+  "title": "NCBD Category",
+  "category": "widgets",
+  "icon": "category",
+  "description": "Display category posts with child categories for News Channel BD.",
+  "attributes": {
+    "viewMoreText": {
+      "type": "string",
+      "default": "View All"
+    },
+    "headingBorderPosition": {
+      "type": "string",
+      "default": "left"
+    },
+    "headingBorderWidth": {
+      "type": "number",
+      "default": 5
+    }
+  },
+  "example": {},
+  "supports": {
+    "html": false
+  },
+  "textdomain": "newschannelbd",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "render": "file:./render.php",
+  "viewScript": "file:./view.js"
+}

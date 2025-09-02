@@ -1,0 +1,20 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "newschannelbd/ncb-navigation",
+  "version": "0.1.0",
+  "title": "NCB Navigation",
+  "category": "widgets",
+  "icon": "menu-alt3",
+  "description": "Mobile navigation sidebar with search and menu items for News Channel BD.",
+  "example": {},
+  "supports": {
+    "html": false
+  },
+  "textdomain": "newschannelbd",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "render": "file:./render.php",
+  "viewScript": "file:./view.js"
+}
