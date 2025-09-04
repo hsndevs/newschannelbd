@@ -44,16 +44,31 @@ $heading_border_width = $attributes['headingBorderWidth'] ?? 5;
 
 	// if $chld_categories is empty, loop $child_category_posts view here.
 	if ( is_archive() ) {
-		// Loop through all categories (current + children).
-		$category_posts = get_posts(
-			array(
-				'category' => $current_category->term_id ?? 0,
-				'numberposts' => -1,
-				'orderby' => 'date',
-			)
-		);
+		// Use the main query for pagination to work correctly with custom rewrite rules.
+		global $wp_query;
+		$current_page = max( 1, get_query_var( 'paged' ) );
+		$category_posts = $wp_query->posts;
 
 		loop_archive_posts( $current_category, $category_posts, $view_more_text, $heading_border_position, $heading_border_width );
+
+		// Add pagination if there are multiple pages.
+		if ( $wp_query->max_num_pages > 1 ) {
+			echo '<div class="ncbd-pagination-wrapper">';
+			echo wp_kses_post(
+				paginate_links(
+					array(
+						'total' => $wp_query->max_num_pages,
+						'current' => $current_page,
+						'prev_text' => '&laquo; Previous',
+						'next_text' => 'Next &raquo;',
+						'mid_size' => 2,
+						'end_size' => 1,
+						'type' => 'plain',
+					)
+				)
+			);
+			echo '</div>';
+		}
 	} else {
 		foreach ( $all_categories as $category ) {
 			$category_posts = get_posts(

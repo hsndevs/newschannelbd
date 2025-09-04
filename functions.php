@@ -712,6 +712,100 @@ function add_latest_post_scripts() {
 }
 add_action( 'admin_footer', 'add_latest_post_scripts' );
 
+// Add a column to posts with checkbox field for featured posts in the wp-admin
+function add_featured_post_column( $columns ) {
+	$columns['featured_post'] = 'Featured Post';
+	return $columns;
+}
+add_filter( 'manage_posts_columns', 'add_featured_post_column' );
+
+// Modify the checkbox column to include AJAX functionality for featured posts
+function add_featured_post_column_content( $column_name, $post_id ) {
+	if ( $column_name == 'featured_post' ) {
+		$is_featured = get_post_meta( $post_id, '_featured_post', true );
+		$nonce = wp_create_nonce( 'featured_post_nonce' );
+		echo '<div style="padding-left: 30px;">';
+		echo '<input type="checkbox" class="featured-post-checkbox" '
+			. 'data-post-id="' . esc_attr( $post_id ) . '" '
+			. 'data-nonce="' . esc_attr( $nonce ) . '" '
+			. ( $is_featured === 'yes' ? 'checked' : '' )
+			. '>';
+		echo '</div>';
+	}
+}
+add_action( 'manage_posts_custom_column', 'add_featured_post_column_content', 10, 2 );
+
+// Add AJAX action for featured post update
+function handle_featured_post_update() {
+	// Verify nonce for security
+	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'featured_post_nonce' ) ) {
+		wp_send_json_error( 'Invalid nonce' );
+	}
+
+	// Check if post ID is set
+	if ( ! isset( $_POST['post_id'] ) ) {
+		wp_send_json_error( 'Post ID is required' );
+	}
+
+	$post_id = intval( $_POST['post_id'] );
+	$is_checked = isset( $_POST['is_checked'] ) ? $_POST['is_checked'] === 'true' : false;
+
+	// Update post meta with yes/no value
+	$result = update_post_meta( $post_id, '_featured_post', $is_checked ? 'yes' : 'no' );
+
+	if ( $result ) {
+		wp_send_json_success( 'Meta updated successfully' );
+	} else {
+		wp_send_json_error( 'Failed to update meta' );
+	}
+}
+add_action( 'wp_ajax_update_featured_post', 'handle_featured_post_update' );
+
+function add_featured_post_scripts() {
+	if ( is_admin() ) {
+		?>
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				document.querySelectorAll('.featured-post-checkbox').forEach(function(checkbox) {
+					checkbox.addEventListener('change', function() {
+						const postId = this.dataset.postId;
+						const nonce = this.dataset.nonce;
+						const isChecked = this.checked;
+
+						const formData = new URLSearchParams();
+						formData.append('action', 'update_featured_post');
+						formData.append('post_id', postId);
+						formData.append('is_checked', isChecked);
+						formData.append('nonce', nonce);
+
+						fetch(ajaxurl, {
+								method: 'POST',
+								headers: {
+									'Content-Type': 'application/x-www-form-urlencoded'
+								},
+								body: formData
+							})
+							.then(response => response.json())
+							.then(data => {
+								if (!data.success) {
+									alert('Failed to update featured post status');
+									checkbox.checked = !isChecked;
+								}
+							})
+							.catch(error => {
+								console.error('Error:', error);
+								alert('Failed to update featured post status');
+								checkbox.checked = !isChecked;
+							});
+					});
+				});
+			});
+		</script>
+		<?php
+	}
+}
+add_action( 'admin_footer', 'add_featured_post_scripts' );
+
 
 function get_meta_filtered_posts_x( $meta_key, $meta_value ) {
 	$args = array(
@@ -746,40 +840,82 @@ function get_meta_filtered_posts( $meta_key, $meta_value ) {
 	// Display child category name
 	// $html = '<h2 class="ncbd-block-title">' . $category_name->name . '</h2>';
 
-	// Loop through each post but create a grid of 3 columns using flexbox
-	$html = '<div class="ncbd-block-posts">';
+	// Loop through each post but create a 3-column layout with center post
+	$html = '<div class="ncbd-block-posts" style="display: flex; width: 100%; gap: 15px;">';
 	if ( count( $latest_posts->posts ) < 1 ) {
-		$html .= 'No post found!';
+		$html .= '<div style="flex: 1; text-align: center;">No post found!</div>';
 	} else {
+		$posts = $latest_posts->posts;
+		$total_posts = count( $posts );
 
-		foreach ( $latest_posts->posts as $post ) {
+		// Center column (60% - main post with image)
+		$main_post = $posts[0]; // First post for center
+		$post_thumbnail = has_post_thumbnail( $main_post ) ? get_the_post_thumbnail( $main_post, 'full', array( 'style' => '' ) ) : '<span style="font-size: 1.5em; color: #333;">NewsChannelBD</span>';
+		$post_title = get_the_title( $main_post );
+		$post_permalink = get_permalink( $main_post );
+		$post_excerpt = get_the_excerpt( $main_post );
+		$post_time_diff = human_time_diff( get_the_time( 'U', $main_post ), current_time( 'timestamp' ) );
+		$shareThis = '';
 
-			$post_thumbnail = has_post_thumbnail( $post ) ? get_the_post_thumbnail( $post, 'full', array( 'style' => '' ) ) : '<span style="font-size: 1.5em; color: #333;">NewsChannelBD</span>';
+		// Left column (20% - posts without images)
+		$html .= '<div style="flex: 0 0 25%; display: flex; flex-direction: column; gap: 20px;">';
+		$left_posts = array_slice( $posts, 1, 3 ); // Get posts 2-3 for left column
+		foreach ( $left_posts as $post ) {
 			$post_title = get_the_title( $post );
 			$post_permalink = get_permalink( $post );
-			$post_excerpt = get_the_excerpt( $post );
 			$post_time_diff = human_time_diff( get_the_time( 'U', $post ), current_time( 'timestamp' ) );
-			$shareThis = '';
-			// echo $shareThis = sharethis_inline_buttons();
 
 			$html .= <<<HTML
-		<div class="ncbd-post">
-			<div class="ncbd-post-thumb">
-				<a href="$post_permalink" title="$post_title">
-					{$post_thumbnail}
-				</a>
+			<div class="ncbd-post-item" style="margin-bottom: 15px;">
+				<h4 style="margin: 0 0 5px 0; line-height: 1.3;">
+					<a href="{$post_permalink}" title="{$post_title}" style="text-decoration: none; color: #333;">{$post_title}</a>
+				</h4>
+				<p style="margin: 0; color: #777;">{$post_excerpt}</p>
+				<p style="margin: 0; color: #777; font-style: italic;">{$post_time_diff} ago</p>
 			</div>
-			<div class="ncbd-post-content">
-				<h3 class="ncbd-post-title"><a href="{$post_permalink}" title="{$post_title}">{$post_title}</a></h3>
-				<div style="flex: 1 1 100%;display:flex;justify-content: flex-end;flex-direction: column;">
-					<p style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;margin:0;">{$post_excerpt}</p>
-					<p style="margin:0;font-style:italic;color:#555;">{$post_time_diff} ago</p>
-				</div>
-			</div>
-			{$shareThis}
-		</div>
-	HTML;
+			HTML;
 		}
+		$html .= '</div>';
+
+		$html .= <<<HTML
+		<div style="flex: 0 0 calc(50% - 40px);">
+			<div class="ncbd-post" style="width: 100%;">
+				<div class="ncbd-post-thumb">
+					<a href="$post_permalink" title="$post_title">
+						{$post_thumbnail}
+					</a>
+				</div>
+				<div class="ncbd-post-content">
+					<h3 class="ncbd-post-title"><a href="{$post_permalink}" title="{$post_title}">{$post_title}</a></h3>
+					<div style="flex: 1 1 100%;display:flex;justify-content: flex-end;flex-direction: column;">
+						<p style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;margin:0;">{$post_excerpt}</p>
+						<p style="margin:0;font-style:italic;color:#555;">{$post_time_diff} ago</p>
+					</div>
+				</div>
+				{$shareThis}
+			</div>
+		</div>
+		HTML;
+
+		// Right column (20% - posts without images)
+		$html .= '<div style="flex: 0 0 25%; display: flex; flex-direction: column; gap: 10px;">';
+		$right_posts = array_slice( $posts, 4, 3 ); // Get posts 4-5 for right column
+		foreach ( $right_posts as $post ) {
+			$post_title = get_the_title( $post );
+			$post_permalink = get_permalink( $post );
+			$post_time_diff = human_time_diff( get_the_time( 'U', $post ), current_time( 'timestamp' ) );
+
+			$html .= <<<HTML
+			<div class="ncbd-post-item" style="margin-bottom: 15px;">
+				<h4 style="margin: 0 0 5px 0; font-size: 14px; line-height: 1.3;">
+					<a href="{$post_permalink}" title="{$post_title}" style="text-decoration: none; color: #333;">{$post_title}</a>
+				</h4>
+				<p style="margin: 0; color: #777;">{$post_excerpt}</p>
+				<p style="margin: 0; color: #777; font-style: italic;">{$post_time_diff} ago</p>
+			</div>
+			HTML;
+		}
+		$html .= '</div>';
 	}
 	$html .= '</div>';
 	wp_reset_postdata();
@@ -817,3 +953,16 @@ function register_report_by_taxonomy() {
 	register_taxonomy( 'report_by', array( 'post' ), $args );
 }
 add_action( 'init', 'register_report_by_taxonomy' );
+
+/**
+ * Modify main query for category archives to ensure proper pagination.
+ *
+ * @param WP_Query $query The main query.
+ * @return void
+ */
+function ncbd_modify_category_query( $query ) {
+	if ( ! is_admin() && $query->is_main_query() && is_category() ) {
+		$query->set( 'posts_per_page', 8 );
+	}
+}
+add_action( 'pre_get_posts', 'ncbd_modify_category_query' );

@@ -1,0 +1,1 @@
+document.addEventListener("DOMContentLoaded",function(){console.log("Featured News Block loaded")});
