@@ -841,7 +841,7 @@ function get_meta_filtered_posts( $meta_key, $meta_value ) {
 	// $html = '<h2 class="ncbd-block-title">' . $category_name->name . '</h2>';
 
 	// Loop through each post but create a 3-column layout with center post
-	$html = '<div class="ncbd-block-posts" style="display: flex; width: 100%; gap: 15px;">';
+	$html = '<div class="ncbd-block-posts" style="display: flex; width: 100%; gap: 30px;">';
 	if ( count( $latest_posts->posts ) < 1 ) {
 		$html .= '<div style="flex: 1; text-align: center;">No post found!</div>';
 	} else {
@@ -858,7 +858,7 @@ function get_meta_filtered_posts( $meta_key, $meta_value ) {
 		$shareThis = '';
 
 		// Left column (20% - posts without images)
-		$html .= '<div style="flex: 0 0 25%; display: flex; flex-direction: column; gap: 20px;">';
+		$html .= '<div style="flex: 0 0 25%; display: flex; flex-direction: column; gap: 10px;">';
 		$left_posts = array_slice( $posts, 1, 3 ); // Get posts 2-3 for left column
 		foreach ( $left_posts as $post ) {
 			$post_title = get_the_title( $post );
@@ -878,7 +878,7 @@ function get_meta_filtered_posts( $meta_key, $meta_value ) {
 		$html .= '</div>';
 
 		$html .= <<<HTML
-		<div style="flex: 0 0 calc(50% - 40px);">
+		<div style="flex: 0 0 calc(50% - 60px);">
 			<div class="ncbd-post" style="width: 100%;">
 				<div class="ncbd-post-thumb">
 					<a href="$post_permalink" title="$post_title">
