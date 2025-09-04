@@ -48,6 +48,9 @@ class Enqueue
 		wp_enqueue_style('frontend-style', get_stylesheet_directory_uri() . '/build/frontend.css', array(), '1.0.0', 'all');
 		// enqueue for both frontend and backend
 
+		// Enqueue featured news layout styles
+		wp_enqueue_style('featured-news-layout', get_stylesheet_directory_uri() . '/assets/css/featured-news-layout.css', array(), '1.0.0', 'all');
+
 		wp_enqueue_style('google-icon-style', esc_url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined'), array(), '1.0.0', 'all');
 		// <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=search" />
 		wp_enqueue_script(

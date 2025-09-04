@@ -841,14 +841,14 @@ function get_meta_filtered_posts( $meta_key, $meta_value ) {
 	// $html = '<h2 class="ncbd-block-title">' . $category_name->name . '</h2>';
 
 	// Loop through each post but create a 3-column layout with center post
-	$html = '<div class="ncbd-block-posts" style="display: flex; width: 100%; gap: 30px;">';
+	$html = '<div class="ncbd-block-posts">';
 	if ( count( $latest_posts->posts ) < 1 ) {
 		$html .= '<div style="flex: 1; text-align: center;">No post found!</div>';
 	} else {
 		$posts = $latest_posts->posts;
 		$total_posts = count( $posts );
 
-		// Center column (60% - main post with image)
+		// Center column (main post with image)
 		$main_post = $posts[0]; // First post for center
 		$post_thumbnail = has_post_thumbnail( $main_post ) ? get_the_post_thumbnail( $main_post, 'full', array( 'style' => '' ) ) : '<span style="font-size: 1.5em; color: #333;">NewsChannelBD</span>';
 		$post_title = get_the_title( $main_post );
@@ -857,29 +857,31 @@ function get_meta_filtered_posts( $meta_key, $meta_value ) {
 		$post_time_diff = human_time_diff( get_the_time( 'U', $main_post ), current_time( 'timestamp' ) );
 		$shareThis = '';
 
-		// Left column (20% - posts without images)
-		$html .= '<div style="flex: 0 0 25%; display: flex; flex-direction: column; gap: 10px;">';
-		$left_posts = array_slice( $posts, 1, 3 ); // Get posts 2-3 for left column
+		// Left column (posts without images)
+		$html .= '<div class="ncbd-featured-left-column">';
+		$left_posts = array_slice( $posts, 1, 3 ); // Get posts 2-4 for left column
 		foreach ( $left_posts as $post ) {
-			$post_title = get_the_title( $post );
-			$post_permalink = get_permalink( $post );
-			$post_time_diff = human_time_diff( get_the_time( 'U', $post ), current_time( 'timestamp' ) );
+			$post_title_item = get_the_title( $post );
+			$post_permalink_item = get_permalink( $post );
+			$post_excerpt_item = get_the_excerpt( $post );
+			$post_time_diff_item = human_time_diff( get_the_time( 'U', $post ), current_time( 'timestamp' ) );
 
 			$html .= <<<HTML
-			<div class="ncbd-post-item" style="margin-bottom: 15px;">
-				<h4 style="margin: 0 0 5px 0; line-height: 1.3;">
-					<a href="{$post_permalink}" title="{$post_title}" style="text-decoration: none; color: #333;">{$post_title}</a>
+			<div class="ncbd-post-item">
+				<h4>
+					<a href="{$post_permalink_item}" title="{$post_title_item}">{$post_title_item}</a>
 				</h4>
-				<p style="margin: 0; color: #777;">{$post_excerpt}</p>
-				<p style="margin: 0; color: #777; font-style: italic;">{$post_time_diff} ago</p>
+				<p class="post-excerpt">{$post_excerpt_item}</p>
+				<p class="post-time">{$post_time_diff_item} ago</p>
 			</div>
 			HTML;
 		}
 		$html .= '</div>';
 
+		// Center column (main post with image)
 		$html .= <<<HTML
-		<div style="flex: 0 0 calc(50% - 60px);">
-			<div class="ncbd-post" style="width: 100%;">
+		<div class="ncbd-featured-center-column">
+			<div class="ncbd-post">
 				<div class="ncbd-post-thumb">
 					<a href="$post_permalink" title="$post_title">
 						{$post_thumbnail}
@@ -887,31 +889,30 @@ function get_meta_filtered_posts( $meta_key, $meta_value ) {
 				</div>
 				<div class="ncbd-post-content">
 					<h3 class="ncbd-post-title"><a href="{$post_permalink}" title="{$post_title}">{$post_title}</a></h3>
-					<div style="flex: 1 1 100%;display:flex;justify-content: flex-end;flex-direction: column;">
-						<p style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;margin:0;">{$post_excerpt}</p>
-						<p style="margin:0;font-style:italic;color:#555;">{$post_time_diff} ago</p>
-					</div>
+					<p class="ncbd-post-excerpt">{$post_excerpt}</p>
+					<p class="ncbd-post-time">{$post_time_diff} ago</p>
 				</div>
 				{$shareThis}
 			</div>
 		</div>
 		HTML;
 
-		// Right column (20% - posts without images)
-		$html .= '<div style="flex: 0 0 25%; display: flex; flex-direction: column; gap: 10px;">';
-		$right_posts = array_slice( $posts, 4, 3 ); // Get posts 4-5 for right column
+		// Right column (posts without images)
+		$html .= '<div class="ncbd-featured-right-column">';
+		$right_posts = array_slice( $posts, 4, 3 ); // Get posts 5-7 for right column
 		foreach ( $right_posts as $post ) {
-			$post_title = get_the_title( $post );
-			$post_permalink = get_permalink( $post );
-			$post_time_diff = human_time_diff( get_the_time( 'U', $post ), current_time( 'timestamp' ) );
+			$post_title_item = get_the_title( $post );
+			$post_permalink_item = get_permalink( $post );
+			$post_excerpt_item = get_the_excerpt( $post );
+			$post_time_diff_item = human_time_diff( get_the_time( 'U', $post ), current_time( 'timestamp' ) );
 
 			$html .= <<<HTML
-			<div class="ncbd-post-item" style="margin-bottom: 15px;">
-				<h4 style="margin: 0 0 5px 0; font-size: 14px; line-height: 1.3;">
-					<a href="{$post_permalink}" title="{$post_title}" style="text-decoration: none; color: #333;">{$post_title}</a>
+			<div class="ncbd-post-item">
+				<h4>
+					<a href="{$post_permalink_item}" title="{$post_title_item}">{$post_title_item}</a>
 				</h4>
-				<p style="margin: 0; color: #777;">{$post_excerpt}</p>
-				<p style="margin: 0; color: #777; font-style: italic;">{$post_time_diff} ago</p>
+				<p class="post-excerpt">{$post_excerpt_item}</p>
+				<p class="post-time">{$post_time_diff_item} ago</p>
 			</div>
 			HTML;
 		}
