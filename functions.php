@@ -930,22 +930,6 @@ add_action( 'pre_get_posts', 'ncbd_modify_category_query' );
 
 
 
-/**
- * Display the caption below the post thumbnail (featured image) on single posts.
- */
-function ncb_display_post_thumbnail_caption() {
-	if ( ! is_singular() ) {
-		return;
-	}
-	$thumbnail_id = get_post_thumbnail_id();
-	if ( ! $thumbnail_id ) {
-		return;
-	}
-	$caption = wp_get_attachment_caption( $thumbnail_id );
-	if ( $caption ) {
-		echo '<div class="post-thumbnail-caption" style="text-align:center;font-size:0.95em;color:#666;margin-top:0.5em;">' . esc_html( $caption ) . '</div>';
-	}
-}
 
 // Hook the caption display after the_post_thumbnail in single post content
 add_filter(
