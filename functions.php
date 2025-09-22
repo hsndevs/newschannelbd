@@ -1,4 +1,98 @@
+
 <?php
+// Add a column to posts with checkbox field for news ticker in the wp-admin
+function add_news_ticker_post_column( $columns ) {
+	$columns['news_ticker'] = 'News Ticker';
+	return $columns;
+}
+add_filter( 'manage_posts_columns', 'add_news_ticker_post_column' );
+
+// Modify the checkbox column to include AJAX functionality for news ticker
+function add_news_ticker_post_column_content( $column_name, $post_id ) {
+	if ( $column_name == 'news_ticker' ) {
+		$is_news_ticker = get_post_meta( $post_id, '_news_ticker', true );
+		$nonce = wp_create_nonce( 'news_ticker_nonce' );
+		echo '<div style="padding-left: 30px;">';
+		echo '<input type="checkbox" class="news-ticker-checkbox" '
+			. 'data-post-id="' . esc_attr( $post_id ) . '" '
+			. 'data-nonce="' . esc_attr( $nonce ) . '" '
+			. ( $is_news_ticker === 'yes' ? 'checked' : '' )
+			. '>';
+		echo '</div>';
+	}
+}
+add_action( 'manage_posts_custom_column', 'add_news_ticker_post_column_content', 10, 2 );
+
+// Add AJAX action for news ticker update
+function handle_news_ticker_post_update() {
+	// Verify nonce for security
+	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'news_ticker_nonce' ) ) {
+		wp_send_json_error( 'Invalid nonce' );
+	}
+
+	// Check if post ID is set
+	if ( ! isset( $_POST['post_id'] ) ) {
+		wp_send_json_error( 'Post ID is required' );
+	}
+
+	$post_id = intval( $_POST['post_id'] );
+	$is_checked = isset( $_POST['is_checked'] ) ? $_POST['is_checked'] === 'true' : false;
+
+	// Update post meta with yes/no value
+	$result = update_post_meta( $post_id, '_news_ticker', $is_checked ? 'yes' : 'no' );
+
+	if ( $result ) {
+		wp_send_json_success( 'Meta updated successfully' );
+	} else {
+		wp_send_json_error( 'Failed to update meta' );
+	}
+}
+add_action( 'wp_ajax_update_news_ticker_post', 'handle_news_ticker_post_update' );
+
+function add_news_ticker_post_scripts() {
+	if ( is_admin() ) {
+		?>
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				document.querySelectorAll('.news-ticker-checkbox').forEach(function(checkbox) {
+					checkbox.addEventListener('change', function() {
+						const postId = this.dataset.postId;
+						const nonce = this.dataset.nonce;
+						const isChecked = this.checked;
+
+						const formData = new URLSearchParams();
+						formData.append('action', 'update_news_ticker_post');
+						formData.append('post_id', postId);
+						formData.append('is_checked', isChecked);
+						formData.append('nonce', nonce);
+
+						fetch(ajaxurl, {
+								method: 'POST',
+								headers: {
+									'Content-Type': 'application/x-www-form-urlencoded'
+								},
+								body: formData
+							})
+							.then(response => response.json())
+							.then(data => {
+								if (!data.success) {
+									alert('Failed to update news ticker status');
+									checkbox.checked = !isChecked;
+								}
+							})
+							.catch(error => {
+								console.error('Error:', error);
+								alert('Failed to update news ticker status');
+								checkbox.checked = !isChecked;
+							});
+					});
+				});
+			});
+		</script>
+		<?php
+	}
+}
+add_action( 'admin_footer', 'add_news_ticker_post_scripts' );
 
 /**
  * Functions and definitions of the theme.
