@@ -38,8 +38,6 @@ function newschannelbd_post_thumbnail() {
 // add_action('newschannelbd_post_thumbnail', 'newschannelbd_post_thumbnail');
 
 
-
-
 function my_custom_category_rewrite_rules( $rules ) {
 	$new_rules = array();
 	$categories = get_categories( array( 'hide_empty' => false ) );
@@ -842,40 +840,83 @@ function get_meta_filtered_posts( $meta_key, $meta_value ) {
 	// Display child category name
 	// $html = '<h2 class="ncbd-block-title">' . $category_name->name . '</h2>';
 
-	// Loop through each post but create a grid of 3 columns using flexbox
+	// Loop through each post but create a 3-column layout with center post
 	$html = '<div class="ncbd-block-posts">';
 	if ( count( $latest_posts->posts ) < 1 ) {
-		$html .= 'No post found!';
+		$html .= '<div style="flex: 1; text-align: center;">No post found!</div>';
 	} else {
+		$posts = $latest_posts->posts;
+		$total_posts = count( $posts );
 
-		foreach ( $latest_posts->posts as $post ) {
+		// Center column (main post with image)
+		$main_post = $posts[0]; // First post for center
+		$post_thumbnail = has_post_thumbnail( $main_post ) ? get_the_post_thumbnail( $main_post, 'full', array( 'style' => '' ) ) : '<span style="font-size: 1.5em; color: #333;">NewsChannelBD</span>';
+		$post_title = get_the_title( $main_post );
+		$post_permalink = get_permalink( $main_post );
+		$post_excerpt = get_the_excerpt( $main_post );
+		$post_time_diff = human_time_diff( get_the_time( 'U', $main_post ), current_time( 'timestamp' ) );
+		$shareThis = '';
 
-			$post_thumbnail = has_post_thumbnail( $post ) ? get_the_post_thumbnail( $post, 'full', array( 'style' => '' ) ) : '<span style="font-size: 1.5em; color: #333;">NewsChannelBD</span>';
-			$post_title = get_the_title( $post );
-			$post_permalink = get_permalink( $post );
-			$post_excerpt = get_the_excerpt( $post );
-			$post_time_diff = human_time_diff( get_the_time( 'U', $post ), current_time( 'timestamp' ) );
-			$shareThis = '';
-			// echo $shareThis = sharethis_inline_buttons();
+		// Left column (posts without images)
+		$html .= '<div class="ncbd-featured-left-column">';
+		$left_posts = array_slice( $posts, 1, 3 ); // Get posts 2-4 for left column
+		foreach ( $left_posts as $post ) {
+			$post_title_item = get_the_title( $post );
+			$post_permalink_item = get_permalink( $post );
+			$post_excerpt_item = get_the_excerpt( $post );
+			$post_time_diff_item = human_time_diff( get_the_time( 'U', $post ), current_time( 'timestamp' ) );
 
 			$html .= <<<HTML
-		<div class="ncbd-post">
-			<div class="ncbd-post-thumb">
-				<a href="$post_permalink" title="$post_title">
-					{$post_thumbnail}
-				</a>
+			<div class="ncbd-post-item">
+				<h4>
+					<a href="{$post_permalink_item}" title="{$post_title_item}">{$post_title_item}</a>
+				</h4>
+				<p class="post-excerpt">{$post_excerpt_item}</p>
+				<p class="post-time">{$post_time_diff_item} ago</p>
 			</div>
-			<div class="ncbd-post-content">
-				<h3 class="ncbd-post-title"><a href="{$post_permalink}" title="{$post_title}">{$post_title}</a></h3>
-				<div style="flex: 1 1 100%;display:flex;justify-content: flex-end;flex-direction: column;">
-					<p style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;margin:0;">{$post_excerpt}</p>
-					<p style="margin:0;font-style:italic;color:#555;">{$post_time_diff} ago</p>
-				</div>
-			</div>
-			{$shareThis}
-		</div>
-	HTML;
+			HTML;
 		}
+		$html .= '</div>';
+
+		// Center column (main post with image)
+		$html .= <<<HTML
+		<div class="ncbd-featured-center-column">
+			<div class="ncbd-post">
+				<div class="ncbd-post-thumb">
+					<a href="$post_permalink" title="$post_title">
+						{$post_thumbnail}
+					</a>
+				</div>
+				<div class="ncbd-post-content">
+					<h3 class="ncbd-post-title"><a href="{$post_permalink}" title="{$post_title}">{$post_title}</a></h3>
+					<p class="ncbd-post-excerpt">{$post_excerpt}</p>
+					<p class="ncbd-post-time">{$post_time_diff} ago</p>
+				</div>
+				{$shareThis}
+			</div>
+		</div>
+		HTML;
+
+		// Right column (posts without images)
+		$html .= '<div class="ncbd-featured-right-column">';
+		$right_posts = array_slice( $posts, 4, 3 ); // Get posts 5-7 for right column
+		foreach ( $right_posts as $post ) {
+			$post_title_item = get_the_title( $post );
+			$post_permalink_item = get_permalink( $post );
+			$post_excerpt_item = get_the_excerpt( $post );
+			$post_time_diff_item = human_time_diff( get_the_time( 'U', $post ), current_time( 'timestamp' ) );
+
+			$html .= <<<HTML
+			<div class="ncbd-post-item">
+				<h4>
+					<a href="{$post_permalink_item}" title="{$post_title_item}">{$post_title_item}</a>
+				</h4>
+				<p class="post-excerpt">{$post_excerpt_item}</p>
+				<p class="post-time">{$post_time_diff_item} ago</p>
+			</div>
+			HTML;
+		}
+		$html .= '</div>';
 	}
 	$html .= '</div>';
 	wp_reset_postdata();
@@ -926,10 +967,6 @@ function ncbd_modify_category_query( $query ) {
 	}
 }
 add_action( 'pre_get_posts', 'ncbd_modify_category_query' );
-
-
-
-
 
 // Hook the caption display after the_post_thumbnail in single post content
 add_filter(
