@@ -1,4 +1,3 @@
-
 <?php
 // Add a column to posts with checkbox field for news ticker in the wp-admin
 function add_news_ticker_post_column( $columns ) {
