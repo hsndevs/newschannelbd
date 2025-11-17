@@ -13,8 +13,20 @@ $ncbd_news = get_posts(
 	array(
 		'post_type'      => 'post',
 		'posts_per_page' => 3,
+		'meta_query'     => array(
+			array(
+				'key'     => '_news_ticker',
+				'value'   => 'yes',
+				'compare' => '=',
+			),
+		),
 	)
 );
+
+// If no posts match the ticker meta, return early to avoid rendering empty markup.
+if ( empty( $ncbd_news ) ) {
+	return '';
+}
 ?>
 
 <div <?php echo get_block_wrapper_attributes(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
