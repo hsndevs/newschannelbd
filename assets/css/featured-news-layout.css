@@ -59,6 +59,7 @@
 @media all and (min-width: 768px) {
 	.ncbd-post-item .ncbd-post-thumb {
 		display: none;
+		aspect-ratio: unset;
 	}
 
 	.ncbd-post-content {
