@@ -1,4 +1,5 @@
 <?php
+use \NewsChannelBD\Layouts;
 // Add a column to posts with checkbox field for news ticker in the wp-admin
 function add_news_ticker_post_column( $columns ) {
 	$columns['news_ticker'] = 'News Ticker';
@@ -126,6 +127,15 @@ if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 NewsChannelBD\Theme_Main::get_instance();
 
 define( 'NEWSCHANNELBD_PLACEHOLDER_IMAGE', 'https://placehold.co/600x400/ddd/999/svg?text=No+Image+Found' );
+
+/**
+ * Register custom image sizes used by the theme.
+ */
+function newschannelbd_register_image_sizes() {
+	// 250x150 hard-cropped thumbnail for featured lists.
+	add_image_size( 'ncbd-thumb-250x150', 250, 150, true );
+}
+add_action( 'after_setup_theme', 'newschannelbd_register_image_sizes' );
 
 // This function will add fallback post thumbnail here for each post
 function newschannelbd_post_thumbnail() {
@@ -956,9 +966,10 @@ function get_meta_filtered_posts( $meta_key, $meta_value, $layout = 'latest' ) {
 		$total_posts = count( $posts );
 
 		if ( 'latest' === $layout ) {
-			$html .= latest_post_layout( $posts );
+			// Use the FeaturedNews Layouts class for latest-post layout HTML.
+			$html .= Layouts::get_instance()->latest_post_layout( $posts );
 		} elseif ( 'featured' === $layout ) {
-			$html .= featured_post_layout( $posts );
+			$html .= Layouts::get_instance()->featured_post_layout( $posts );
 		}
 	}
 	$html .= '</div>';
@@ -966,121 +977,6 @@ function get_meta_filtered_posts( $meta_key, $meta_value, $layout = 'latest' ) {
 	echo wp_kses_post( $html );
 }
 
-
-/**
- * Generate latest post layout
- *
- * @param mixed $posts Posts array.
- *
- * @return string
- */
-function latest_post_layout( $posts ) {
-	$html = '<div class="ncbd-posts-column">';
-	foreach ( $posts as $post ) {
-		$post_thumbnail = has_post_thumbnail( $post ) ? get_the_post_thumbnail( $post, 'full' ) : '<span class="no-thumbnail">NewsChannelBD</span>';
-		$post_title = get_the_title( $post );
-		$post_permalink = get_permalink( $post );
-		$post_excerpt = get_the_excerpt( $post );
-		$post_time_diff = human_time_diff( get_the_time( 'U', $post ), current_time( 'timestamp' ) );
-
-		$html .= <<<HTML
-		<div class="latest-post-item">
-			<div class="post-thumbnail">
-				<a href="$post_permalink" title="$post_title">
-					{$post_thumbnail}
-				</a>
-			</div>
-			<div class="post-content">
-				<h3 class="post-title"><a href="{$post_permalink}" title="{$post_title}">{$post_title}</a></h3>
-				<p class="post-excerpt">{$post_excerpt}</p>
-				<div class="post-meta">
-					<span class="post-date">{$post_time_diff} ago</span>
-				</div>
-			</div>
-		</div>
-		HTML;
-	}
-	$html .= '</div>';
-		return $html;
-}
-
-/**
- * Generate featured post layout
- *
- * @param mixed $posts Posts array.
- *
- * @return string
- */
-function featured_post_layout( $posts ) {
-		// Center column (main post with image).
-		$main_post = $posts[0]; // First post for center.
-		$post_thumbnail = has_post_thumbnail( $main_post ) ? get_the_post_thumbnail( $main_post, 'full', array( 'style' => '' ) ) : '<span style="font-size: 1.5em; color: #333;">NewsChannelBD</span>';
-		$post_title = get_the_title( $main_post );
-		$post_permalink = get_permalink( $main_post );
-		$post_excerpt = get_the_excerpt( $main_post );
-		$post_time_diff = human_time_diff( get_the_time( 'U', $main_post ), current_time( 'timestamp' ) );
-
-		// Left column (posts without images).
-		$html = '<div class="ncbd-featured-left-column">';
-		$left_posts = array_slice( $posts, 1, 3 ); // Get posts 2-4 for left column.
-	foreach ( $left_posts as $post ) {
-		$post_title_item = get_the_title( $post );
-		$post_permalink_item = get_permalink( $post );
-		$post_excerpt_item = get_the_excerpt( $post );
-		$post_time_diff_item = human_time_diff( get_the_time( 'U', $post ), current_time( 'timestamp' ) );
-
-		$html .= <<<HTML
-			<div class="ncbd-post-item">
-				<h4>
-					<a href="{$post_permalink_item}" title="{$post_title_item}">{$post_title_item}</a>
-				</h4>
-				<p class="post-excerpt">{$post_excerpt_item}</p>
-				<p class="post-time">{$post_time_diff_item} ago</p>
-			</div>
-			HTML;
-	}
-		$html .= '</div>';
-
-		// Center column (main post with image).
-		$html .= <<<HTML
-		<div class="ncbd-featured-center-column">
-			<div class="ncbd-post">
-				<div class="ncbd-post-thumb">
-					<a href="$post_permalink" title="$post_title">
-						{$post_thumbnail}
-					</a>
-				</div>
-				<div class="ncbd-post-content">
-					<h3 class="ncbd-post-title"><a href="{$post_permalink}" title="{$post_title}">{$post_title}</a></h3>
-					<p class="ncbd-post-excerpt">{$post_excerpt}</p>
-					<p class="ncbd-post-time">{$post_time_diff} ago</p>
-				</div>
-			</div>
-		</div>
-		HTML;
-
-		// Right column (posts without images).
-		$html .= '<div class="ncbd-featured-right-column">';
-		$right_posts = array_slice( $posts, 4, 3 ); // Get posts 5-7 for right column.
-	foreach ( $right_posts as $post ) {
-		$post_title_item = get_the_title( $post );
-		$post_permalink_item = get_permalink( $post );
-		$post_excerpt_item = get_the_excerpt( $post );
-		$post_time_diff_item = human_time_diff( get_the_time( 'U', $post ), current_time( 'timestamp' ) );
-
-		$html .= <<<HTML
-			<div class="ncbd-post-item">
-				<h4>
-					<a href="{$post_permalink_item}" title="{$post_title_item}">{$post_title_item}</a>
-				</h4>
-				<p class="post-excerpt">{$post_excerpt_item}</p>
-				<p class="post-time">{$post_time_diff_item} ago</p>
-			</div>
-			HTML;
-	}
-		$html .= '</div>';
-		return $html;
-}
 
 
 // Register custom taxonomy 'report_by' for posts

@@ -9,5 +9,5 @@
  */
 ?>
 <div <?php echo get_block_wrapper_attributes(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-	<?php get_meta_filtered_posts( '_latest_post', 'yes' ); ?>
+	<?php get_meta_filtered_posts( '_latest_post', 'yes', 'latest' ); ?>
 </div>

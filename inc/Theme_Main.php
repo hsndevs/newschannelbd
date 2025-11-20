@@ -99,6 +99,8 @@ final class Theme_Main
 		$this->define_constants();
 
 		Blocks\Variations::get_instance();
+		// Blocks\FeaturedNews\Index::get_instance();
+
 		Enqueue::get_instance();
 		Tgmpa::get_instance();
 		Meta_Widget::get_instance();
