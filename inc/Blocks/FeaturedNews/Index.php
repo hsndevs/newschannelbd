@@ -5,6 +5,9 @@
 
 namespace NewsChannelBD\Blocks\FeaturedNews;
 
+/**
+ * Index Class
+ */
 class Index {
 
 	use \NewsChannelBD\Traits\Singleton; // Use the Singleton and PluginData trait.
@@ -19,21 +22,31 @@ class Index {
 	}
 
 
+	/**
+	 * Register hooks and do other setup tasks.
+	 *
+	 * @return void
+	 */
 	public function register_hooks() {
 		// Register block styles.
 		add_action( 'inc', array( $this, 'newschannelbd_featured_hooks' ) );
 	}
 
+	/**
+	 * Register Featured News Block hooks.
+	 *
+	 * @return void
+	 */
 	public function newschannelbd_featured_hooks() {
 		// Featured News Block render callback. Render latest post layout from the
 		// FeaturedNews Layouts class. We fetch a small set of recent posts and
 		// delegate HTML generation to the Layouts::latest_post_layout method.
-		$posts = get_posts(
-			array(
-				'post_type'      => 'post',
-				'posts_per_page' => 6,
-			)
-		);
-		echo wp_kses_post( Layouts::get_instance()->latest_post_layout( $posts ) );
+		// $posts = get_posts(
+		// 	array(
+		// 		'post_type'      => 'post',
+		// 		'posts_per_page' => 6,
+		// 	)
+		// );
+		// echo wp_kses_post( Layouts::get_instance()->latest_post_layout( $posts ) );.
 	}
 }

@@ -180,7 +180,7 @@ class Layouts {
 
 		// Right column (posts without images).
 		$html .= '<div class="ncbd-featured-right-column">';
-		$right_posts = array_slice( $posts, 4, 2 ); // Get posts 5-6 for right column.
+		$right_posts = array_slice( $posts, 4, 3 ); // Get posts 5-6 for right column.
 		foreach ( $right_posts as $post ) {
 			$post_title_item = get_the_title( $post );
 			$post_permalink_item = get_permalink( $post );
