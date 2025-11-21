@@ -12,7 +12,7 @@
 $ncbd_news = get_posts(
 	array(
 		'post_type'      => 'post',
-		'posts_per_page' => 3,
+		'posts_per_page' => 15,
 		'meta_query'     => array(
 			array(
 				'key'     => '_news_ticker',
