@@ -123,7 +123,7 @@ class Layouts {
 	public function featured_post_layout( $posts ) {
 		// Center column (main post with image).
 		$main_post = $posts[0]; // First post for center.
-		$post_thumbnail = has_post_thumbnail( $main_post ) ? get_the_post_thumbnail( $main_post, 'full', array( 'style' => '' ) ) : '<span style="font-size: 1.5em; color: #333;">NewsChannelBD</span>';
+		$post_thumbnail_featured = has_post_thumbnail( $main_post ) ? get_the_post_thumbnail( $main_post, 'full', array( 'style' => '' ) ) : '<span style="font-size: 1.5em; color: #333;">NewsChannelBD</span>';
 		$post_title = get_the_title( $main_post );
 		$post_permalink = get_permalink( $main_post );
 		$post_excerpt = get_the_excerpt( $main_post );
@@ -141,13 +141,11 @@ class Layouts {
 			$post_time_diff_item = human_time_diff( get_the_time( 'U', $post ), current_time( 'timestamp' ) );
 			$post_thumbnail = has_post_thumbnail( $post ) ? get_the_post_thumbnail( $post, 'medium', array( 'style' => '' ) ) : '<div style="font-size: 1.5em; color: #333;">NCBD</div>';
 
-			$post_thumbnail_item = $post_thumbnail;
-
 			$html .= <<<HTML
 			<div class="ncbd-post-item">
 				<div class="ncbd-post-thumb">
 					<a href="{$post_permalink_item}" title="{$post_title_item}">
-						{$post_thumbnail_item}
+						{$post_thumbnail}
 					</a>
 				</div>
 				<div class="ncbd-post-content">
@@ -166,7 +164,7 @@ class Layouts {
 			<div class="ncbd-post">
 				<div class="ncbd-post-thumb">
 					<a href="$post_permalink" title="$post_title">
-						{$post_thumbnail}
+						{$post_thumbnail_featured}
 					</a>
 				</div>
 				<div class="ncbd-post-content">
