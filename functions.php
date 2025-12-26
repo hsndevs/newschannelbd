@@ -155,6 +155,8 @@ function newschannelbd_post_thumbnail() {
 // add_action('newschannelbd_post_thumbnail', 'newschannelbd_post_thumbnail');
 
 
+
+
 function my_custom_category_rewrite_rules( $rules ) {
 	$new_rules = array();
 	$categories = get_categories( array( 'hide_empty' => false ) );
