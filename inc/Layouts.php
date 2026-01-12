@@ -120,6 +120,7 @@ class Layouts {
 		return $html;
 	}
 
+
 	public function featured_post_layout( $posts ) {
 		// Center column (main post with image).
 		$main_post = $posts[0]; // First post for center.

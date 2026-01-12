@@ -1,5 +1,5 @@
 <?php
-use \NewsChannelBD\Layouts;
+use NewsChannelBD\Layouts;
 // Add a column to posts with checkbox field for news ticker in the wp-admin
 function add_news_ticker_post_column( $columns ) {
 	$columns['news_ticker'] = 'News Ticker';
@@ -11,7 +11,7 @@ add_filter( 'manage_posts_columns', 'add_news_ticker_post_column' );
 function add_news_ticker_post_column_content( $column_name, $post_id ) {
 	if ( $column_name == 'news_ticker' ) {
 		$is_news_ticker = get_post_meta( $post_id, '_news_ticker', true );
-		$nonce = wp_create_nonce( 'news_ticker_nonce' );
+		$nonce          = wp_create_nonce( 'news_ticker_nonce' );
 		echo '<div style="padding-left: 30px;">';
 		echo '<input type="checkbox" class="news-ticker-checkbox" '
 			. 'data-post-id="' . esc_attr( $post_id ) . '" '
@@ -35,7 +35,7 @@ function handle_news_ticker_post_update() {
 		wp_send_json_error( 'Post ID is required' );
 	}
 
-	$post_id = intval( wp_unslash( $_POST['post_id'] ) );
+	$post_id    = intval( wp_unslash( $_POST['post_id'] ) );
 	$is_checked = false;
 	if ( isset( $_POST['is_checked'] ) ) {
 		// Normalize boolean-like values safely.
@@ -155,14 +155,16 @@ function newschannelbd_post_thumbnail() {
 // add_action('newschannelbd_post_thumbnail', 'newschannelbd_post_thumbnail');
 
 
+
+
 function my_custom_category_rewrite_rules( $rules ) {
-	$new_rules = array();
+	$new_rules  = array();
 	$categories = get_categories( array( 'hide_empty' => false ) );
 
 	foreach ( $categories as $category ) {
 		$new_rules[ '(' . $category->slug . ')/(?:feed/)?(feed|rdf|rss|rss2|atom)/?$' ] = 'index.php?category_name=$matches[1]&feed=$matches[2]';
-		$new_rules[ '(' . $category->slug . ')/page/?([0-9]{1,})/?$' ] = 'index.php?category_name=$matches[1]&paged=$matches[2]';
-		$new_rules[ '(' . $category->slug . ')/?$' ] = 'index.php?category_name=$matches[1]';
+		$new_rules[ '(' . $category->slug . ')/page/?([0-9]{1,})/?$' ]                  = 'index.php?category_name=$matches[1]&paged=$matches[2]';
+		$new_rules[ '(' . $category->slug . ')/?$' ]                                    = 'index.php?category_name=$matches[1]';
 	}
 
 	return $new_rules + $rules;
@@ -191,13 +193,13 @@ function loop_category_posts(
 	$html = '';
 	if ( $category_name ) {
 		// Display child category name.
-		$category_link = get_category_link( $category_name->term_id );
-		$border_class = 'bottom' === $heading_border_position ? ' bottom-border' : '';
-		$border_style = 'bottom' === $heading_border_position
+		$category_link          = get_category_link( $category_name->term_id );
+		$border_class           = 'bottom' === $heading_border_position ? ' bottom-border' : '';
+		$border_style           = 'bottom' === $heading_border_position
 			? "border-bottom-width: {$heading_border_width}px;"
 			: "border-left-width: {$heading_border_width}px;";
-		$category_name = esc_html( $category_name->name ?? '' );
-		$category_link_url = esc_url( $category_link );
+		$category_name          = esc_html( $category_name->name ?? '' );
+		$category_link_url      = esc_url( $category_link );
 		$view_more_text_escaped = esc_html( $view_more_text );
 
 		$html .= <<<HTML
@@ -207,11 +209,11 @@ function loop_category_posts(
 			</div>
 		HTML;
 	} else {
-		$border_class = 'bottom' === $heading_border_position ? ' bottom-border' : '';
-		$border_style = 'bottom' === $heading_border_position
+		$border_class           = 'bottom' === $heading_border_position ? ' bottom-border' : '';
+		$border_style           = 'bottom' === $heading_border_position
 			? "border-bottom-width: {$heading_border_width}px;"
 			: "border-left-width: {$heading_border_width}px;";
-		$blog_url = esc_url( home_url( '/blog' ) );
+		$blog_url               = esc_url( home_url( '/blog' ) );
 		$view_more_text_escaped = esc_html( $view_more_text );
 
 		$html .= <<<HTML
@@ -237,9 +239,9 @@ function loop_category_posts(
 		foreach ( $all_posts as $post ) {
 
 			$post_thumbnail = has_post_thumbnail( $post ) ? get_the_post_thumbnail( $post, 'full', array( 'style' => '' ) ) : '<span style="font-size: 1.5em; color: #333;">NewsChannelBD</span>';
-			$post_title = get_the_title( $post );
+			$post_title     = get_the_title( $post );
 			$post_permalink = get_permalink( $post );
-			$post_excerpt = get_the_excerpt( $post );
+			$post_excerpt   = get_the_excerpt( $post );
 			$post_time_diff = human_time_diff( get_the_time( 'U', $post ), current_time( 'timestamp' ) );
 
 			$html .= <<<HTML
@@ -287,11 +289,11 @@ function loop_archive_posts(
 	$html = '';
 	if ( $category_name ) {
 		// Display child category name.
-		$border_class = 'bottom' === $heading_border_position ? ' bottom-border' : '';
-		$border_style = 'bottom' === $heading_border_position
+		$border_class           = 'bottom' === $heading_border_position ? ' bottom-border' : '';
+		$border_style           = 'bottom' === $heading_border_position
 			? "border-bottom-width: {$heading_border_width}px;"
 			: "border-left-width: {$heading_border_width}px;";
-		$category_name = esc_html( $category_name->name ?? '' );
+		$category_name          = esc_html( $category_name->name ?? '' );
 		$view_more_text_escaped = esc_html( $view_more_text );
 
 		$html .= <<<HTML
@@ -300,11 +302,11 @@ function loop_archive_posts(
 			</div>
 		HTML;
 	} else {
-		$border_class = 'bottom' === $heading_border_position ? ' bottom-border' : '';
-		$border_style = 'bottom' === $heading_border_position
+		$border_class           = 'bottom' === $heading_border_position ? ' bottom-border' : '';
+		$border_style           = 'bottom' === $heading_border_position
 			? "border-bottom-width: {$heading_border_width}px;"
 			: "border-left-width: {$heading_border_width}px;";
-		$blog_url = esc_url( home_url( '/blog' ) );
+		$blog_url               = esc_url( home_url( '/blog' ) );
 		$view_more_text_escaped = esc_html( $view_more_text );
 
 		$html .= <<<HTML
@@ -330,9 +332,9 @@ function loop_archive_posts(
 		foreach ( $all_posts as $post ) {
 
 			$post_thumbnail = has_post_thumbnail( $post ) ? get_the_post_thumbnail( $post, 'full', array( 'style' => '' ) ) : '<span style="font-size: 1.5em; color: #333;">NewsChannelBD</span>';
-			$post_title = get_the_title( $post );
+			$post_title     = get_the_title( $post );
 			$post_permalink = get_permalink( $post );
-			$post_excerpt = get_the_excerpt( $post );
+			$post_excerpt   = get_the_excerpt( $post );
 			$post_time_diff = human_time_diff( get_the_time( 'U', $post ), current_time( 'timestamp' ) );
 
 			$html .= <<<HTML
@@ -411,7 +413,7 @@ class Parent_Category_Walker extends Walker_Nav_Menu {
 
 			if ( ! empty( $subcategories ) ) {
 
-				$output .= '<li class="menu-item menu-item-type-taxonomy menu-item-object-category has-submenu">';
+				$output      .= '<li class="menu-item menu-item-type-taxonomy menu-item-object-category has-submenu">';
 				$active_class = '';
 				foreach ( $subcategories as $subcategory ) {
 					if ( is_category( $subcategory->term_id ) ) {
@@ -661,7 +663,7 @@ function render_post_item( $post, $signle = false ) {
 	// Loop through categories
 	if ( ! empty( $post_categories ) ) {
 		foreach ( $post_categories as $category ) {
-			$cat = get_category( $category );
+			$cat     = get_category( $category );
 			$output .= '<div class="category-button"><a href="' . get_term_link( $cat ) . '">' . esc_html( $cat->name ) . '</a></div>';
 		}
 	}
@@ -735,7 +737,7 @@ add_filter( 'manage_posts_columns', 'add_latest_post_column' );
 function add_latest_post_column_content( $column_name, $post_id ) {
 	if ( $column_name == 'latest_post' ) {
 		$is_latest = get_post_meta( $post_id, '_latest_post', true );
-		$nonce = wp_create_nonce( 'latest_post_nonce' );
+		$nonce     = wp_create_nonce( 'latest_post_nonce' );
 		echo '<div style="padding-left: 30px;">';
 		echo '<input type="checkbox" class="latest-post-checkbox" '
 			. 'data-post-id="' . esc_attr( $post_id ) . '" '
@@ -770,7 +772,7 @@ function handle_latest_post_update() {
 		wp_send_json_error( 'Post ID is required' );
 	}
 
-	$post_id = intval( $_POST['post_id'] );
+	$post_id    = intval( $_POST['post_id'] );
 	$is_checked = isset( $_POST['is_checked'] ) ? $_POST['is_checked'] === 'true' : false;
 
 	// Update post meta with yes/no value
@@ -840,7 +842,7 @@ add_filter( 'manage_posts_columns', 'add_featured_post_column' );
 function add_featured_post_column_content( $column_name, $post_id ) {
 	if ( $column_name == 'featured_post' ) {
 		$is_featured = get_post_meta( $post_id, '_featured_post', true );
-		$nonce = wp_create_nonce( 'featured_post_nonce' );
+		$nonce       = wp_create_nonce( 'featured_post_nonce' );
 		echo '<div style="padding-left: 30px;">';
 		echo '<input type="checkbox" class="featured-post-checkbox" '
 			. 'data-post-id="' . esc_attr( $post_id ) . '" '
@@ -864,7 +866,7 @@ function handle_featured_post_update() {
 		wp_send_json_error( 'Post ID is required' );
 	}
 
-	$post_id = intval( $_POST['post_id'] );
+	$post_id    = intval( $_POST['post_id'] );
 	$is_checked = isset( $_POST['is_checked'] ) ? $_POST['is_checked'] === 'true' : false;
 
 	// Update post meta with yes/no value
@@ -926,12 +928,12 @@ add_action( 'admin_footer', 'add_featured_post_scripts' );
 
 function get_meta_filtered_posts_x( $meta_key, $meta_value ) {
 	$args = array(
-		'post_type' => 'post',
+		'post_type'      => 'post',
 		'posts_per_page' => 3,
-		'meta_query' => array(
+		'meta_query'     => array(
 			array(
-				'key' => $meta_key,
-				'value' => $meta_value,
+				'key'     => $meta_key,
+				'value'   => $meta_value,
 				'compare' => '=',
 			),
 		),
@@ -942,13 +944,13 @@ function get_meta_filtered_posts_x( $meta_key, $meta_value ) {
 
 function get_meta_filtered_posts( $meta_key, $meta_value, $layout = 'latest' ) {
 
-	$args = array(
-		'post_type' => 'post',
+	$args         = array(
+		'post_type'      => 'post',
 		'posts_per_page' => -1,
-		'meta_query' => array(
+		'meta_query'     => array(
 			array(
-				'key' => $meta_key,
-				'value' => $meta_value,
+				'key'     => $meta_key,
+				'value'   => $meta_value,
 				'compare' => '=',
 			),
 		),
@@ -962,15 +964,18 @@ function get_meta_filtered_posts( $meta_key, $meta_value, $layout = 'latest' ) {
 	if ( count( $latest_posts->posts ) < 1 ) {
 		$html .= '<div style="flex: 1; text-align: center;">No post found!</div>';
 	} else {
-		$posts = $latest_posts->posts;
+		$posts       = $latest_posts->posts;
 		$total_posts = count( $posts );
 
+		// $html     .= Layouts::get_instance()->featured_post_layout( $posts );
+			$html .= Layouts::get_instance()->featured_post_layout( $posts );
+
+		/*
 		if ( 'latest' === $layout ) {
-			// Use the FeaturedNews Layouts class for latest-post layout HTML.
 			$html .= Layouts::get_instance()->latest_post_layout( $posts );
 		} elseif ( 'featured' === $layout ) {
 			$html .= Layouts::get_instance()->featured_post_layout( $posts );
-		}
+		} */
 	}
 	$html .= '</div>';
 	wp_reset_postdata();
