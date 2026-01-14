@@ -242,7 +242,8 @@ function loop_category_posts(
 			$post_title     = get_the_title( $post );
 			$post_permalink = get_permalink( $post );
 			$post_excerpt   = get_the_excerpt( $post );
-			$post_time_diff = human_time_diff( get_the_time( 'U', $post ), current_time( 'timestamp' ) );
+			// $post_time_diff = human_time_diff( get_the_time( 'U', $post ), current_time( 'timestamp' ) );
+			$post_time_diff = human_time_diff( get_the_time( 'U', $post ), time() );
 
 			$html .= <<<HTML
 				<div class="ncbd-post">
@@ -968,14 +969,14 @@ function get_meta_filtered_posts( $meta_key, $meta_value, $layout = 'latest' ) {
 		$total_posts = count( $posts );
 
 		// $html     .= Layouts::get_instance()->featured_post_layout( $posts );
-			$html .= Layouts::get_instance()->featured_post_layout( $posts );
+		// $html .= Layouts::get_instance()->featured_post_layout( $posts );
 
-		/*
 		if ( 'latest' === $layout ) {
+
 			$html .= Layouts::get_instance()->latest_post_layout( $posts );
 		} elseif ( 'featured' === $layout ) {
 			$html .= Layouts::get_instance()->featured_post_layout( $posts );
-		} */
+		}
 	}
 	$html .= '</div>';
 	wp_reset_postdata();

@@ -19,15 +19,15 @@ use NewsChannelBD\Blocks\Variations\List_With_Circle;
 use NewsChannelBD\Blocks\Variations\List_With_Gradient_Bullet;
 use NewsChannelBD\Blocks\Variations\List_With_Right_Arrow;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
  * Block_Variations Class
  */
-class Variations
-{
+class Variations {
+
 
 	use \NewsChannelBD\Traits\Singleton; // Use the Singleton and PluginData trait.
 
@@ -35,24 +35,21 @@ class Variations
 	 * Class constructor
 	 * (private to enforce singleton pattern).
 	 */
-	private function __construct()
-	{
+	private function __construct() {
 		// All the initialization tasks.
 		$this->register_hooks();
 	}
 
 
-	public function register_hooks()
-	{
+	public function register_hooks() {
 		// Register block styles.
-		add_action('enqueue_block_assets', array($this, 'newschannelbd_register_block_styles'));
+		add_action( 'enqueue_block_assets', array( $this, 'newschannelbd_register_block_styles' ) );
 	}
 
 	/**
 	 * Register block variations
 	 */
-	public function newschannelbd_register_block_styles()
-	{
+	public function newschannelbd_register_block_styles() {
 		// Register block variations.
 		Btn_Orange_Color::get_instance();
 		Btn_White_Color::get_instance();
